@@ -2,11 +2,11 @@
   "states": [
     {
       "name": "Badge",
-      "filePath": "./screenshots/Badge-Basic.png"
+      "filePath": "Badge-Basic.png"
     },
     {
       "name": "Button",
-      "filePath": "./screenshots/MyButton-Basic.png"
+      "filePath": "MyButton-Basic.png"
     }
   ]
 }

@@ -11,7 +11,9 @@ interface ImagesProps {
   }>;
 }
 
-export const Images = ({ filePath = '', ignoreRegions = [] }) => {
+export const Images = ({ filePath = '' }) => {
+  // const image = require(`../../${filePath}`);
+  console.log(filePath);
   return (
     <View>
       {/* {ignoreRegions.map((region) => (
@@ -28,12 +30,12 @@ export const Images = ({ filePath = '', ignoreRegions = [] }) => {
           }}
         ></div>
       ))} */}
-      <Image
+      {/* <Image
         source={{ uri: filePath }}
         alt="baseline_image"
         width={240}
         height={320}
-      />
+      /> */}
     </View>
   );
 };
