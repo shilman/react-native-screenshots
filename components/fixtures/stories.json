@@ -1,0 +1,12 @@
+{
+  "states": [
+    {
+      "name": "Badge",
+      "filePath": "Badge-Basic.png"
+    },
+    {
+      "name": "Button",
+      "filePath": "MyButton-Basic.png"
+    }
+  ]
+}

@@ -75,7 +75,7 @@ const storyPaths = storiesSpecifiers.reduce((acc, specifier) => {
 
 async function takeScreenshot(name: string) {
   exec(
-    `xcrun simctl io booted screenshot --type png screenshots/${name}.png`,
+    `xcrun simctl io booted screenshot --type png assets/${name}.png`,
     (error: Error, stdout: string, stderr: string) => {
       if (error) {
         console.log(`error: ${error.message}`);
@@ -91,7 +91,7 @@ async function takeScreenshot(name: string) {
 }
 
 async function GoThroughAllStories() {
-  await exec('mkdir -p screenshots');
+  // await exec('mkdir -p screenshots');
   // await exec('mkdir -p screenshots-base');
   // await exec('mkdir -p screenshots-diff');
   // await exec('rm -rf screenshots-diff/*.png');

@@ -10,6 +10,7 @@ import "@storybook/addon-ondevice-notes/register";
 import "@storybook/addon-ondevice-controls/register";
 import "@storybook/addon-ondevice-backgrounds/register";
 import "@storybook/addon-ondevice-actions/register";
+import "./preset/register";
 
 const normalizedStories = [
   {
@@ -23,6 +24,19 @@ const normalizedStories = [
       "../components",
       true,
       /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.stories\.(?:ts|tsx|js|jsx)?)$/
+    ),
+  },
+  {
+    titlePrefix: "",
+    directory: "./components",
+    files: "**/*.dynamic.@(js|jsx|ts|tsx)",
+    importPathMatcher:
+      /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.dynamic\.(js|jsx|ts|tsx))$/,
+    // @ts-ignore
+    req: require.context(
+      "../components",
+      true,
+      /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.dynamic\.(js|jsx|ts|tsx))$/
     ),
   },
 ];
