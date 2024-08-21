@@ -10,6 +10,7 @@ module.exports = {
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-react-native-web',
+    '@storybook/addon-react-native-server',
     './preset',
   ],
   framework: {
@@ -18,5 +19,9 @@ module.exports = {
   },
   docs: {
     autodocs: false,
+  },
+  reactNativeServerOptions: {
+    host: 'localhost',
+    port: 7007,
   },
 };

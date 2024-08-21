@@ -1,57 +1,23 @@
 ![image](https://user-images.githubusercontent.com/3481514/145904252-92e3dc1e-591f-410f-88a1-b4250f4ba6f2.png)
 
-# getting started
+## Taking image snapshots of Storybook
+
+Screenshotting your RN app requires a few steps:
+
+1. Start the web version of Storybook. You should see the string "websocket connection established".
 
 ```sh
-npx create-expo-app --template expo-template-storybook AwesomeStorybook
+npm run storybook:web
 ```
 
-or
+1. After the web version is running, start the RN version with `EXPO_PUBLIC_STORYBOOK_SNAPSHOT=1`. `EXPO_PUBLIC_STORYBOOK_SNAPSHOT` removes Storybook's UI for cleaner screenshots.
 
 ```sh
-yarn create expo-app --template expo-template-storybook AwesomeStorybook
+EXPO_PUBLIC_STORYBOOK_SNAPSHOT=1 npm run storybook:ios
 ```
 
-# app
+3. After the RN version is running, run the snapshot tool, which will loop over the stories and save them into the `screenshots` directory.
 
 ```sh
-yarn start
-```
-
-# Ondevice
-
-In this template you can now run `yarn storybook` to start ondevice storybook or `yarn start` to start your expo app.
-This works via env variables and expo constants.
-
-```sh
-# either
-yarn storybook
-
-# ios
-yarn storybook:ios
-
-# android
-yarn storybook:android
-```
-
-If you add new stories on the native (ondevice version) you either need to have the watcher running or run the stories loader
-
-To update the stories one time
-
-```sh
-yarn storybook-generate
-```
-
-# Web
-
-Start react native web storybook:
-
-```
-yarn storybook:web
-```
-
-build react native web storybook:
-
-```sh
-yarn build-storybook
+npm run snapshot-storybook
 ```
