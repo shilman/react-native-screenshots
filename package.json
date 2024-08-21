@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "storybook:web": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -26,6 +26,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.73.6",
+    "react-native-blob-util": "^0.19.11",
+    "react-native-fs": "^2.20.0",
     "react-native-safe-area-context": "4.8.2",
     "react-native-view-shot": "^3.8.0",
     "react-native-web": "~0.19.10"
@@ -40,9 +42,8 @@
     "@storybook/addon-ondevice-actions": "^7.6.20",
     "@storybook/addon-ondevice-backgrounds": "^7.6.20",
     "@storybook/addon-ondevice-controls": "^7.6.20",
-    "@storybook/addon-ondevice-notes": "^7.6.20",
-    "@storybook/addon-react-native-web": "^0.0.23",
     "@storybook/addon-react-native-server": "^0.0.5",
+    "@storybook/addon-react-native-web": "^0.0.23",
     "@storybook/addons": "^7.6.17",
     "@storybook/channel-websocket": "^7.6.17",
     "@storybook/react": "^7.6.18",
@@ -65,11 +66,6 @@
   },
   "overrides": {
     "react-docgen-typescript": "2.2.2"
-  },
-  "pnpm": {
-    "overrides": {
-      "react-docgen-typescript": "2.2.2"
-    }
   },
   "private": true
 }

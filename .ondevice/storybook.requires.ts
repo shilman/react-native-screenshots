@@ -6,11 +6,9 @@ import {
   getProjectAnnotations,
 } from "@storybook/react-native";
 
-import "@storybook/addon-ondevice-notes/register";
 import "@storybook/addon-ondevice-controls/register";
 import "@storybook/addon-ondevice-backgrounds/register";
 import "@storybook/addon-ondevice-actions/register";
-import "./preset/register";
 
 const normalizedStories = [
   {
@@ -24,6 +22,19 @@ const normalizedStories = [
       "../components",
       true,
       /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.stories\.(?:ts|tsx|js|jsx)?)$/
+    ),
+  },
+  {
+    titlePrefix: "",
+    directory: "./components",
+    files: "**/*.stories.json",
+    importPathMatcher:
+      /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.stories\.json)$/,
+    // @ts-ignore
+    req: require.context(
+      "../components",
+      true,
+      /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.stories\.json)$/
     ),
   },
   {

@@ -1,5 +1,4 @@
-import fs from 'fs/promises';
-import { join } from 'path';
+import file from 'react-native-blob-util';
 import { dedent } from 'ts-dedent';
 import type { StoryConfigs } from '../dynamic';
 import { defineStories } from '../dynamic';
@@ -13,15 +12,15 @@ export default defineStories({
   `,
   stories: async () => {
     const result = {} as StoryConfigs;
-    const fixtureDir = join(__dirname, './fixtures');
-    const fixtures = (await fs.readdir(fixtureDir)).filter((file) =>
-      file.endsWith('.json')
+    const fixtureDir = '../fixtures';
+    const fixtures = (await file.fs.readFile(fixtureDir, 'utf8')).filter(
+      (file) => file.name.endsWith('.json')
     );
     await Promise.all(
       fixtures.map(async (file) => {
         try {
           const fixture = JSON.parse(
-            await fs.readFile(join(fixtureDir, file), 'utf-8')
+            await file.fs.readFile(`${fixtureDir}/${file}`)
           );
           fixture.states.map((entry: { name: string; filePath: string }) => {
             result[entry.name] = { args: entry };
