@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, Image } from 'react-native';
 
-interface ImagesProps {
-  filePath: string;
+interface ImageProps {
+  src: string;
   ignoreRegions?: Array<{
     top: number;
     width: number;
@@ -11,11 +10,10 @@ interface ImagesProps {
   }>;
 }
 
-export const Images = ({ filePath = '' }) => {
+export const Image = ({ src }) => {
   // const image = require(`../../${filePath}`);
-  console.log(filePath);
   return (
-    <View>
+    <div>
       {/* {ignoreRegions.map((region) => (
         <div
           key={region.top}
@@ -30,13 +28,8 @@ export const Images = ({ filePath = '' }) => {
           }}
         ></div>
       ))} */}
-      {/* <Image
-        source={{ uri: filePath }}
-        alt="baseline_image"
-        width={240}
-        height={320}
-      /> */}
-    </View>
+      <img src={src} alt={src} />
+    </div>
   );
 };
 
@@ -45,7 +38,7 @@ export const Images = ({ filePath = '' }) => {
 // Value is coordinates for ignore regions
 // Our script would look for the ignore regions and add absolute coordinates to the image with the divs we've defined
 // export const ignoreRegions = {
-//   'Images.tsx': [
+//   'Image.tsx': [
 //     {
 //       x: 0,
 //       y: 0,

@@ -18,6 +18,7 @@ module.exports = {
   docs: {
     autodocs: false,
   },
+  staticDirs: [{ from: '../screenshots', to: 'screenshots' }],
   reactNativeServerOptions: {
     host: 'localhost',
     port: 7007,
