@@ -30,3 +30,5 @@ export interface DynamicConfig {
   baseCsf: CsfString;
   stories: () => Promise<StoryConfigs> | StoryConfigs;
 }
+
+export const defineStories = async (config: DynamicConfig) => config;
