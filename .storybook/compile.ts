@@ -1,5 +1,5 @@
 import { parseModule } from 'magicast';
-import type { DynamicConfig, StoryConfig } from '../components/dynamic/types';
+import type { DynamicConfig, StoryConfig } from '../components/dynamic/dynamic';
 
 const prepareStory = (story: StoryConfig) => {
   // FIXME: need arrow function support
@@ -14,7 +14,10 @@ const prepareStory = (story: StoryConfig) => {
 
 export interface CompileOptions {}
 
-export const compile = async (config: DynamicConfig, options?: CompileOptions) => {
+export const compile = async (
+  config: DynamicConfig,
+  options?: CompileOptions
+) => {
   const { baseCsf } = config;
   const stories = await config.stories();
 

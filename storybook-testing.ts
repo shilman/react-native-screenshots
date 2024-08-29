@@ -36,7 +36,7 @@ channel.emit(Events.CHANNEL_CREATED, {
   secured,
 });
 
-const configPath = './.storybook';
+const configPath = './.ondevice';
 
 const mainImport = getMain({ configPath });
 const main = mainImport.default ?? mainImport;
@@ -91,11 +91,6 @@ async function takeScreenshot(name: string) {
 }
 
 async function GoThroughAllStories() {
-  // await exec('mkdir -p screenshots');
-  // await exec('mkdir -p screenshots-base');
-  // await exec('mkdir -p screenshots-diff');
-  // await exec('rm -rf screenshots-diff/*.png');
-
   // wait 500ms
   await new Promise((resolve) => {
     setTimeout(() => {
@@ -136,52 +131,6 @@ async function GoThroughAllStories() {
       }
     }
   }
-
-  // let failures: Array<{
-  //   story: string;
-  //   reference: string;
-  //   current: string;
-  //   diff: string;
-  // }> = [];
-
-  // for await (const { meta, stories } of csfStories) {
-  //   for await (const { name: storyName } of stories) {
-  //     const file = `${meta.title}-${storyName}.png`;
-
-  //     const reference = `screenshots/${file}`;
-  //     const current = `screenshots-base/${file}`;
-  //     const diff = `screenshots-diff/${file}`;
-
-  //     console.log('file', file);
-
-  //     const { equal } = await looksSame(current, reference);
-
-  //     if (!equal) {
-  //       await looksSame.createDiff({
-  //         reference,
-  //         current,
-  //         diff,
-  //         highlightColor: '#ff00ff', // color to highlight the differences
-  //         strict: false, // strict comparsion
-  //         tolerance: 2.5,
-  //         antialiasingTolerance: 0,
-  //         ignoreAntialiasing: true, // ignore antialising by default
-  //         ignoreCaret: true, // ignore caret by default
-  //       });
-
-  //       failures.push({
-  //         story: `${meta.title}-${storyName}`,
-  //         reference,
-  //         current,
-  //         diff,
-  //       });
-  //     }
-  //   }
-  // }
-
-  // failures.forEach(({ story, ...others }) => {
-  //   console.log(`${story} failed the test`, others);
-  // });
 
   process.exit(0);
 }
