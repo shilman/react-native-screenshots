@@ -1,17 +1,17 @@
 import 'websocket-polyfill';
 import { execSync } from 'child_process';
-import { createChannel } from '@storybook/channel-websocket';
-import { addons } from '@storybook/addons';
-import Events from '@storybook/core-events';
+import { Channel, WebsocketTransport } from '@storybook/core/channels';
+import { addons } from '@storybook/core/manager-api';
+import Events from '@storybook/core/core-events';
 import { toId } from '@storybook/csf';
 // @ts-ignore
 import { getMain } from '@storybook/react-native/scripts/loader.js';
-import { normalizeStories } from '@storybook/core-common';
+import { normalizeStories } from '@storybook/core/common';
 import * as glob from 'glob';
 import * as path from 'path';
 import * as fs from 'fs';
 // import looksSame from 'looks-same';
-import { loadCsf } from '@storybook/csf-tools';
+import { loadCsf } from '@storybook/core/csf-tools';
 
 const secured = false;
 const host = 'localhost';
@@ -21,9 +21,11 @@ const absolute = true;
 
 const websocketType = secured ? 'wss' : 'ws';
 let url = `${websocketType}://${domain}`;
-const channel = createChannel({ url });
+const channel = new Channel({
+  transport: new WebsocketTransport({ url, page: 'manager', onError: console.error }),
+});
 
-//@ts-ignore
+// @ts-ignore
 addons.setChannel(channel);
 
 channel.emit(Events.CHANNEL_CREATED, {
@@ -75,6 +77,12 @@ async function takeScreenshot(name: string) {
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function GoThroughAllStories() {
+  // const udid = execSync(
+  //   'xcrun simctl list devices | grep Booted | head -n 1 | cut -d "(" -f 2 | cut -d ")" -f 1'
+  // )
+  //   .toString()
+  //   .trim();
+
   // wait 500ms for storybook to start?
   await sleep(500);
 

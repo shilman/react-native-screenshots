@@ -1,5 +1,5 @@
 import { createUnplugin } from 'unplugin';
-import { serverRequire } from '@storybook/core-common';
+import { serverRequire } from '@storybook/core/common';
 import { compile, CompileOptions } from './compile';
 
 export const STORIES_REGEX = /\.dynamic\.[tj]sx?/;
