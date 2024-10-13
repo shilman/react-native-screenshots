@@ -13,6 +13,8 @@ import * as fs from 'fs';
 // import looksSame from 'looks-same';
 import { loadCsf } from '@storybook/core/csf-tools';
 
+console.log('Starting storybook testing');
+
 const secured = false;
 const host = 'localhost';
 const port = 7007;
@@ -23,15 +25,6 @@ const websocketType = secured ? 'wss' : 'ws';
 let url = `${websocketType}://${domain}`;
 const channel = new Channel({
   transport: new WebsocketTransport({ url, page: 'manager', onError: console.error }),
-});
-
-// @ts-ignore
-addons.setChannel(channel);
-
-channel.emit(Events.CHANNEL_CREATED, {
-  host,
-  port,
-  secured,
 });
 
 const configPath = './.ondevice';
@@ -112,9 +105,12 @@ async function GoThroughAllStories() {
   }
 }
 
-GoThroughAllStories()
-  .then(() => process.exit(0))
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  });
+channel.once(Events.STORY_RENDERED, () => {
+  console.log('Going through all stories');
+  GoThroughAllStories()
+    .then(() => process.exit(0))
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    });
+});
