@@ -63,7 +63,7 @@ const storyPaths = storiesSpecifiers.reduce((acc, specifier) => {
 }, [] as string[]);
 
 async function takeScreenshot(name: string) {
-  const out = execSync(`xcrun simctl io booted screenshot --type png assets/${name}.png`);
+  const out = execSync(`xcrun simctl io booted screenshot --type png screenshots/${name}.png`);
   console.log(out.toString());
 }
 
