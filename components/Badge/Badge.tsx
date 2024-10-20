@@ -1,4 +1,4 @@
-import { StyleProp, Text, TextStyle, View } from "react-native";
+import { StyleProp, Text, TextStyle, View } from 'react-native';
 
 interface BadgeProps {
   text: string;
@@ -11,10 +11,10 @@ export const Badge = ({ text, style }: BadgeProps) => {
       style={{
         paddingVertical: 3,
         paddingHorizontal: 8,
-        backgroundColor: "lightgrey",
+        backgroundColor: 'lightgrey',
       }}
     >
-      <Text style={[{ textTransform: "capitalize", color: "black" }, style]}>
+      <Text style={[{ textTransform: 'capitalize', color: 'black' }, style]}>
         {text}
       </Text>
     </View>

@@ -1,10 +1,10 @@
-name: "build-test"
+name: 'build-test'
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
     branches:
       - main
-      - "releases/*"
+      - 'releases/*'
 
 jobs:
   test:
@@ -14,10 +14,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "npm"
+          cache: 'npm'
       - uses: futureware-tech/simulator-action@v3
         with:
-          model: "iPhone 15"
+          model: 'iPhone 15'
           erase_before_boot: false
           shutdown_after_job: false
       # put these here so its doing stuff whilst the simulator is booting

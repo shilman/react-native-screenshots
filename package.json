@@ -20,7 +20,8 @@
     "prebuild": "expo prebuild",
     "start-server": "tsx server.ts",
     "build:screenshot:ios:local": "eas build --profile screenshot --platform ios --local",
-    "build:screenshot:android:local": "eas build --profile screenshot --platform android --local"
+    "build:screenshot:android:local": "eas build --profile screenshot --platform android --local",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.0.3",
@@ -67,7 +68,8 @@
     "tsx": "^4.19.1",
     "typescript": "~5.3.3",
     "wait-on": "^8.0.1",
-    "websocket-polyfill": "^0.0.3"
+    "websocket-polyfill": "^0.0.3",
+    "prettier": "^3.3.3"
   },
   "resolutions": {
     "react-docgen-typescript": "2.2.2"

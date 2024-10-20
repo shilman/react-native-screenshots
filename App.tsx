@@ -1,1 +1,1 @@
-export { default } from "./.ondevice";
+export { default } from './.ondevice';

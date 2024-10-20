@@ -1,20 +1,20 @@
 // import { Channel, WebsocketTransport } from "@storybook/core/channels";
-import "websocket-polyfill";
-import { Channel, WebsocketTransport } from "@storybook/core/channels";
-import Events from "@storybook/core/core-events";
-import { toId } from "@storybook/csf";
-import { execSync } from "child_process";
-import { normalizeStories } from "@storybook/core/common";
-import { loadCsf } from "@storybook/core/csf-tools";
+import 'websocket-polyfill';
+import { Channel, WebsocketTransport } from '@storybook/core/channels';
+import Events from '@storybook/core/core-events';
+import { toId } from '@storybook/csf';
+import { execSync } from 'child_process';
+import { normalizeStories } from '@storybook/core/common';
+import { loadCsf } from '@storybook/core/csf-tools';
 // @ts-ignore
-import { getMain } from "@storybook/react-native/scripts/loader.js";
-import * as fs from "fs";
-import * as glob from "glob";
-import * as path from "path";
-import { WebSocketServer } from "ws";
+import { getMain } from '@storybook/react-native/scripts/loader.js';
+import * as fs from 'fs';
+import * as glob from 'glob';
+import * as path from 'path';
+import { WebSocketServer } from 'ws';
 
 const secured = false;
-const host = "localhost";
+const host = 'localhost';
 const port = 7007;
 const domain = `${host}:${port}`;
 
@@ -24,17 +24,17 @@ const exec = (command: string) => {
   try {
     execSync(command);
   } catch (error) {
-    console.error("Error executing command", command, error);
+    console.error('Error executing command', command, error);
     process.exit(1);
   }
 };
 
-wss.on("connection", function connection(ws) {
-  console.log("websocket connection established");
+wss.on('connection', function connection(ws) {
+  console.log('websocket connection established');
 
-  ws.on("error", console.error);
+  ws.on('error', console.error);
 
-  ws.on("message", function message(data) {
+  ws.on('message', function message(data) {
     try {
       const json = JSON.parse(data.toString());
 
@@ -45,27 +45,27 @@ wss.on("connection", function connection(ws) {
   });
 });
 
-const websocketType = secured ? "wss" : "ws";
+const websocketType = secured ? 'wss' : 'ws';
 let url = `${websocketType}://${domain}`;
 const channel = new Channel({
   transport: new WebsocketTransport({
     url,
-    page: "manager",
+    page: 'manager',
     onError: console.error,
   }),
 });
 
 // kill the app if it's running
-exec("xcrun simctl terminate booted com.chromatic.awesomestorybook || true");
+exec('xcrun simctl terminate booted com.chromatic.awesomestorybook || true');
 
 // launch the app
-exec("xcrun simctl launch booted com.chromatic.awesomestorybook");
+exec('xcrun simctl launch booted com.chromatic.awesomestorybook');
 
-console.log("Starting storybook testing");
+console.log('Starting storybook testing');
 
 const absolute = true;
 
-const configPath = "./.ondevice";
+const configPath = './.ondevice';
 
 const mainImport = getMain({ configPath });
 const main = mainImport.default ?? mainImport;
@@ -75,7 +75,7 @@ const storiesSpecifiers = normalizeStories(main.stories, {
 });
 
 function ensureRelativePathHasDot(relativePath: string) {
-  return relativePath.startsWith(".") ? relativePath : `./${relativePath}`;
+  return relativePath.startsWith('.') ? relativePath : `./${relativePath}`;
 }
 
 const storyPaths = storiesSpecifiers.reduce((acc, specifier) => {
@@ -84,18 +84,18 @@ const storyPaths = storiesSpecifiers.reduce((acc, specifier) => {
       cwd: path.resolve(process.cwd(), specifier.directory),
       absolute,
       // default to always ignore (exclude) anything in node_modules
-      ignore: ["**/node_modules"],
+      ignore: ['**/node_modules'],
     })
     .map((storyPath) => {
       const pathWithDirectory = path.join(specifier.directory, storyPath);
       const requirePath = absolute
         ? storyPath
         : ensureRelativePathHasDot(
-            path.relative(configPath, pathWithDirectory)
+            path.relative(configPath, pathWithDirectory),
           );
 
       const normalizePathForWindows = (str: string) =>
-        path.sep === "\\" ? str.replace(/\\/g, "/") : str;
+        path.sep === '\\' ? str.replace(/\\/g, '/') : str;
 
       return normalizePathForWindows(requirePath);
     });
@@ -109,7 +109,7 @@ async function GoThroughAllStories() {
   await sleep(500);
 
   const csfStories = storyPaths.map((storyPath) => {
-    const code = fs.readFileSync(storyPath, { encoding: "utf-8" }).toString();
+    const code = fs.readFileSync(storyPath, { encoding: 'utf-8' }).toString();
     return loadCsf(code, {
       fileName: storyPath,
       makeTitle: (userTitle) => userTitle,
@@ -119,7 +119,7 @@ async function GoThroughAllStories() {
   for (const { meta, stories } of csfStories) {
     if (meta.title) {
       for (const { name: storyName } of stories) {
-        console.log("story", meta.title, storyName);
+        console.log('story', meta.title, storyName);
 
         const storyId = toId(meta.title, storyName);
 
@@ -130,7 +130,7 @@ async function GoThroughAllStories() {
         });
 
         exec(
-          `xcrun simctl io booted screenshot --type png screenshots/${storyId}.png`
+          `xcrun simctl io booted screenshot --type png screenshots/${storyId}.png`,
         );
       }
     }
@@ -138,11 +138,11 @@ async function GoThroughAllStories() {
 }
 
 channel.once(Events.STORY_RENDERED, () => {
-  console.log("Going through all stories");
+  console.log('Going through all stories');
   GoThroughAllStories()
     .then(() => {
       exec(
-        "xcrun simctl terminate booted com.chromatic.awesomestorybook || true"
+        'xcrun simctl terminate booted com.chromatic.awesomestorybook || true',
       );
 
       wss.clients.forEach((ws) => ws.close());
