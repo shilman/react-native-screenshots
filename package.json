@@ -21,7 +21,8 @@
     "start-server": "tsx server.ts",
     "build:screenshot:ios:local": "eas build --profile screenshot --platform ios --local",
     "build:screenshot:android:local": "eas build --profile screenshot --platform android --local",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "export": "expo export:embed --entry-file=node_modules/expo/AppEntry.js --bundle-output=main.jsbundle"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.0.3",
