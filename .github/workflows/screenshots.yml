@@ -11,6 +11,10 @@ jobs:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
       - uses: futureware-tech/simulator-action@v3
         with:
           model: "iPhone 15"
@@ -24,6 +28,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: assets
-          path: assets/
+          name: screenshots
+          path: screenshots/
           retention-days: 30
