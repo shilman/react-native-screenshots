@@ -1,0 +1,37 @@
+name: 'build-test'
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'releases/*'
+
+jobs:
+  # build: # make sure build/ci work properly
+  #   runs-on: macOS-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - run: |
+  #         npm install
+  #     - run: |
+  #         npm run all
+  test: # make sure the action works on a clean machine without building
+    runs-on: macos-latest-xlarge
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - uses: futureware-tech/simulator-action@v3
+        with:
+          model: 'iPhone 15'
+      - run: xcrun simctl bootstatus booted
+      - run: npm install
+      - run: npm run snapshot-ios
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: screenshots
+          path: screenshots/
+          retention-days: 30

@@ -1,21 +1,19 @@
 import 'websocket-polyfill';
-import { createChannel } from '@storybook/channel-websocket';
-import { addons } from '@storybook/addons';
-import Events from '@storybook/core-events';
+import { execSync } from 'child_process';
+import { Channel, WebsocketTransport } from '@storybook/core/channels';
+import { addons } from '@storybook/core/manager-api';
+import Events from '@storybook/core/core-events';
 import { toId } from '@storybook/csf';
 // @ts-ignore
 import { getMain } from '@storybook/react-native/scripts/loader.js';
-import { normalizeStories } from '@storybook/core-common';
+import { normalizeStories } from '@storybook/core/common';
 import * as glob from 'glob';
 import * as path from 'path';
 import * as fs from 'fs';
 // import looksSame from 'looks-same';
-import { loadCsf } from '@storybook/csf-tools';
-import util from 'util';
+import { loadCsf } from '@storybook/core/csf-tools';
 
-const exec: (s: string, f?: Function) => Promise<any> = util.promisify(
-  require('child_process').exec
-);
+console.log('Starting storybook testing');
 
 const secured = false;
 const host = 'localhost';
@@ -25,15 +23,8 @@ const absolute = true;
 
 const websocketType = secured ? 'wss' : 'ws';
 let url = `${websocketType}://${domain}`;
-const channel = createChannel({ url });
-
-//@ts-ignore
-addons.setChannel(channel);
-
-channel.emit(Events.CHANNEL_CREATED, {
-  host,
-  port,
-  secured,
+const channel = new Channel({
+  transport: new WebsocketTransport({ url, page: 'manager', onError: console.error }),
 });
 
 const configPath = './.ondevice';
@@ -61,9 +52,7 @@ const storyPaths = storiesSpecifiers.reduce((acc, specifier) => {
       const pathWithDirectory = path.join(specifier.directory, storyPath);
       const requirePath = absolute
         ? storyPath
-        : ensureRelativePathHasDot(
-            path.relative(configPath, pathWithDirectory)
-          );
+        : ensureRelativePathHasDot(path.relative(configPath, pathWithDirectory));
 
       const normalizePathForWindows = (str: string) =>
         path.sep === '\\' ? str.replace(/\\/g, '/') : str;
@@ -74,29 +63,21 @@ const storyPaths = storiesSpecifiers.reduce((acc, specifier) => {
 }, [] as string[]);
 
 async function takeScreenshot(name: string) {
-  exec(
-    `xcrun simctl io booted screenshot --type png assets/${name}.png`,
-    (error: Error, stdout: string, stderr: string) => {
-      if (error) {
-        console.log(`error: ${error.message}`);
-        return;
-      }
-      if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        return;
-      }
-      console.log(`stdout: ${stdout}`);
-    }
-  );
+  const out = execSync(`xcrun simctl io booted screenshot --type png screenshots/${name}.png`);
+  console.log(out.toString());
 }
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 async function GoThroughAllStories() {
-  // wait 500ms
-  await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, 500);
-  });
+  // const udid = execSync(
+  //   'xcrun simctl list devices | grep Booted | head -n 1 | cut -d "(" -f 2 | cut -d ")" -f 1'
+  // )
+  //   .toString()
+  //   .trim();
+
+  // wait 500ms for storybook to start?
+  await sleep(500);
 
   const csfStories = storyPaths.map((storyPath) => {
     const code = fs.readFileSync(storyPath, { encoding: 'utf-8' }).toString();
@@ -106,33 +87,30 @@ async function GoThroughAllStories() {
     }).parse();
   });
 
-  for await (const { meta, stories } of csfStories) {
+  for (const { meta, stories } of csfStories) {
     if (meta.title) {
-      for await (const { name: storyName } of stories) {
+      for (const { name: storyName } of stories) {
         console.log('story', meta.title, storyName);
 
         const storyId = toId(meta.title, storyName);
 
-        const doit = () =>
-          new Promise((resolve) => {
-            setTimeout(() => {
-              console.log('emitting story', storyId, meta.title, storyName);
-              channel.emit(Events.SET_CURRENT_STORY, { storyId });
+        channel.emit(Events.SET_CURRENT_STORY, { storyId });
+        await new Promise((resolve) => {
+          channel.on(Events.CURRENT_STORY_WAS_SET, resolve);
+        });
 
-              // delay 500ms
-              setTimeout(async () => {
-                await takeScreenshot(`${meta.title}-${storyName}`);
-                resolve(true);
-              }, 1000);
-            }, 1000);
-          });
-
-        await doit();
+        await takeScreenshot(storyId);
       }
     }
   }
-
-  process.exit(0);
 }
 
-GoThroughAllStories();
+channel.once(Events.STORY_RENDERED, () => {
+  console.log('Going through all stories');
+  GoThroughAllStories()
+    .then(() => process.exit(0))
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    });
+});
