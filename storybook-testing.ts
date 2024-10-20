@@ -20,6 +20,15 @@ const domain = `${host}:${port}`;
 
 const wss = new WebSocketServer({ port, host });
 
+const exec = (command: string) => {
+  try {
+    execSync(command);
+  } catch (error) {
+    console.error("Error executing command", command, error);
+    process.exit(1);
+  }
+};
+
 wss.on("connection", function connection(ws) {
   console.log("websocket connection established");
 
@@ -47,15 +56,10 @@ const channel = new Channel({
 });
 
 // kill the app if it's running
-execSync(
-  "xcrun simctl terminate booted com.chromatic.awesomestorybook || true"
-);
+exec("xcrun simctl terminate booted com.chromatic.awesomestorybook || true");
 
 // launch the app
-execSync("xcrun simctl launch booted com.chromatic.awesomestorybook");
-
-// create the screenshots directory if it doesn't exist
-// execSync("mkdir -p screenshots");
+exec("xcrun simctl launch booted com.chromatic.awesomestorybook");
 
 console.log("Starting storybook testing");
 
@@ -125,7 +129,7 @@ async function GoThroughAllStories() {
           channel.on(Events.CURRENT_STORY_WAS_SET, resolve);
         });
 
-        execSync(
+        exec(
           `xcrun simctl io booted screenshot --type png screenshots/${storyId}.png`
         );
       }
@@ -137,7 +141,7 @@ channel.once(Events.STORY_RENDERED, () => {
   console.log("Going through all stories");
   GoThroughAllStories()
     .then(() => {
-      execSync(
+      exec(
         "xcrun simctl terminate booted com.chromatic.awesomestorybook || true"
       );
 
