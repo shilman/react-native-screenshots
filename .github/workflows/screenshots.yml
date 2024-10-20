@@ -21,7 +21,7 @@ jobs:
           erase_before_boot: false
           shutdown_after_job: false
       # put these here so its doing stuff whilst the simulator is booting
-      - run: npm install
+      - run: npm install --no-audit --progress=false
       - run: tar -xvzf AwesomeStorybook.tar.gz
       # check if the simulator is booted
       - run: xcrun simctl bootstatus booted

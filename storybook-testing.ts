@@ -55,7 +55,7 @@ execSync(
 execSync("xcrun simctl launch booted com.chromatic.awesomestorybook");
 
 // create the screenshots directory if it doesn't exist
-execSync("mkdir -p screenshots");
+// execSync("mkdir -p screenshots");
 
 console.log("Starting storybook testing");
 
