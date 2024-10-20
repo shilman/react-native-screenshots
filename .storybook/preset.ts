@@ -1,15 +1,15 @@
-import type { Indexer } from '@storybook/core/types';
-import { loadCsf } from '@storybook/core/csf-tools';
-import { serverRequire } from '@storybook/core/common';
-import { compile } from './compile.ts';
-import { vite, webpack, STORIES_REGEX } from './unplugin';
+import type { Indexer } from "@storybook/core/types";
+import { loadCsf } from "@storybook/core/csf-tools";
+import { serverRequire } from "@storybook/core/common";
+import { compile } from "./compile";
+import { vite, webpack, STORIES_REGEX } from "./unplugin";
 
 const logger = console;
 
 const dynamicIndexer: Indexer = {
   test: STORIES_REGEX,
   createIndex: async (fileName, opts) => {
-    logger.log('indexing', fileName);
+    logger.log("indexing", fileName);
     delete require.cache[fileName];
     const config = await serverRequire(fileName);
     const compiled = await compile(config);

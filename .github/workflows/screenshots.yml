@@ -1,10 +1,10 @@
-name: 'build-test'
+name: "build-test"
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
     branches:
       - main
-      - 'releases/*'
+      - "releases/*"
 
 jobs:
   # build: # make sure build/ci work properly
@@ -21,10 +21,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: futureware-tech/simulator-action@v3
         with:
-          model: 'iPhone 15'
+          model: "iPhone 15"
       - run: xcrun simctl bootstatus booted
+      - run: xcrun simctl terminate booted com.chromatic.awesomestorybook
+      - run: xcrun simctl uninstall booted com.chromatic.awesomestorybook
       - run: npm install
-      - run: npm run snapshot-ios
+      - run: tar -xvzf AwesomeStorybook.tar.gz
+      - run: xcrun simctl install booted AwesomeStorybook.app
+      - run: npm run snapshot-storybook
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
