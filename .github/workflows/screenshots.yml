@@ -20,14 +20,22 @@ jobs:
           model: "iPhone 15"
           erase_before_boot: false
           shutdown_after_job: false
-      - run: xcrun simctl bootstatus booted
-      - run: xcrun simctl terminate booted com.chromatic.awesomestorybook || true
-      - run: xcrun simctl uninstall booted com.chromatic.awesomestorybook || true
+      # put these here so its doing stuff whilst the simulator is booting
       - run: npm install
       - run: tar -xvzf AwesomeStorybook.tar.gz
-      - run: xcrun simctl install booted AwesomeStorybook.app
-      - run: npm run snapshot-storybook
+      # check if the simulator is booted
+      - run: xcrun simctl bootstatus booted
+      # terminate the app if it is running
       - run: xcrun simctl terminate booted com.chromatic.awesomestorybook || true
+      # uninstall the app if it is installed
+      - run: xcrun simctl uninstall booted com.chromatic.awesomestorybook || true
+      # install the app
+      - run: xcrun simctl install booted AwesomeStorybook.app
+      # Do the actual snapshotting
+      - run: npm run snapshot-storybook
+      # terminate the app after we are done
+      - run: xcrun simctl terminate booted com.chromatic.awesomestorybook || true
+      # uninstall the app after we are done
       - run: xcrun simctl uninstall booted com.chromatic.awesomestorybook || true
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

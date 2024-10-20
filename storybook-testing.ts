@@ -50,8 +50,12 @@ const channel = new Channel({
 execSync(
   "xcrun simctl terminate booted com.chromatic.awesomestorybook || true"
 );
+
 // launch the app
 execSync("xcrun simctl launch booted com.chromatic.awesomestorybook");
+
+// create the screenshots directory if it doesn't exist
+execSync("mkdir -p screenshots");
 
 console.log("Starting storybook testing");
 
