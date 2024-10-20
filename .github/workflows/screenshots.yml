@@ -7,16 +7,9 @@ on: # rebuild any PRs and main branch changes
       - 'releases/*'
 
 jobs:
-  # build: # make sure build/ci work properly
-  #   runs-on: macOS-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - run: |
-  #         npm install
-  #     - run: |
-  #         npm run all
-  test: # make sure the action works on a clean machine without building
-    runs-on: macos-latest-xlarge
+  test:
+    runs-on: macOS-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -26,9 +19,25 @@ jobs:
       - uses: futureware-tech/simulator-action@v3
         with:
           model: 'iPhone 15'
+          erase_before_boot: false
+          shutdown_after_job: false
+      # put these here so its doing stuff whilst the simulator is booting
+      - run: npm install --no-audit --progress=false
+      - run: tar -xvzf AwesomeStorybook.tar.gz
+      # check if the simulator is booted
       - run: xcrun simctl bootstatus booted
-      - run: npm install
-      - run: npm run snapshot-ios
+      # terminate the app if it is running
+      - run: xcrun simctl terminate booted com.chromatic.awesomestorybook || true
+      # uninstall the app if it is installed
+      - run: xcrun simctl uninstall booted com.chromatic.awesomestorybook || true
+      # install the app
+      - run: xcrun simctl install booted AwesomeStorybook.app
+      # Do the actual snapshotting
+      - run: npm run snapshot-storybook
+      # terminate the app after we are done
+      - run: xcrun simctl terminate booted com.chromatic.awesomestorybook || true
+      # uninstall the app after we are done
+      - run: xcrun simctl uninstall booted com.chromatic.awesomestorybook || true
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

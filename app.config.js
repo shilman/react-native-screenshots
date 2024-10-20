@@ -1,12 +1,14 @@
 export default ({ config }) => ({
   ...config,
-  name: 'HelloWorld',
-  slug: 'expo-template-blank-typescript',
+  name: 'AwesomeStorybook',
+  slug: 'awesome-storybook',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
   extra: {
-    storybookEnabled: process.env.STORYBOOK_ENABLED,
+    eas: {
+      projectId: '9cfdca5e-bcf6-49c0-80eb-f91bfaf533c6',
+    },
   },
   splash: {
     image: './assets/splash.png',
@@ -19,13 +21,14 @@ export default ({ config }) => ({
   assetBundlePatterns: ['**/*'],
   ios: {
     supportsTablet: true,
-    bundleIdentifier: 'com.anonymous.expo-template-blank-typescript',
+    bundleIdentifier: 'com.chromatic.awesomestorybook',
   },
   android: {
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#FFFFFF',
     },
+    package: 'com.chromatic.awesomestorybook',
   },
   web: {
     favicon: './assets/favicon.png',
