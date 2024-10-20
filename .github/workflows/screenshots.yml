@@ -18,13 +18,17 @@ jobs:
       - uses: futureware-tech/simulator-action@v3
         with:
           model: "iPhone 15"
+          erase_before_boot: false
+          shutdown_after_job: false
       - run: xcrun simctl bootstatus booted
-      - run: xcrun simctl terminate booted com.chromatic.awesomestorybook
-      - run: xcrun simctl uninstall booted com.chromatic.awesomestorybook
+      - run: xcrun simctl terminate booted com.chromatic.awesomestorybook || true
+      - run: xcrun simctl uninstall booted com.chromatic.awesomestorybook || true
       - run: npm install
       - run: tar -xvzf AwesomeStorybook.tar.gz
       - run: xcrun simctl install booted AwesomeStorybook.app
       - run: npm run snapshot-storybook
+      - run: xcrun simctl terminate booted com.chromatic.awesomestorybook || true
+      - run: xcrun simctl uninstall booted com.chromatic.awesomestorybook || true
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

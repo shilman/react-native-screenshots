@@ -47,7 +47,9 @@ const channel = new Channel({
 });
 
 // kill the app if it's running
-execSync("xcrun simctl terminate booted com.chromatic.awesomestorybook");
+execSync(
+  "xcrun simctl terminate booted com.chromatic.awesomestorybook || true"
+);
 // launch the app
 execSync("xcrun simctl launch booted com.chromatic.awesomestorybook");
 
@@ -120,7 +122,7 @@ async function GoThroughAllStories() {
         });
 
         execSync(
-          `xcrun simctl io booted screenshot --type png assets/${storyId}.png`
+          `xcrun simctl io booted screenshot --type png screenshots/${storyId}.png`
         );
       }
     }
@@ -130,7 +132,17 @@ async function GoThroughAllStories() {
 channel.once(Events.STORY_RENDERED, () => {
   console.log("Going through all stories");
   GoThroughAllStories()
-    .then(() => process.exit(0))
+    .then(() => {
+      execSync(
+        "xcrun simctl terminate booted com.chromatic.awesomestorybook || true"
+      );
+
+      wss.clients.forEach((ws) => ws.close());
+
+      wss.close();
+
+      process.exit(0);
+    })
     .catch((e) => {
       console.error(e);
       process.exit(1);
