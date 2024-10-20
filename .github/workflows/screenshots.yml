@@ -16,7 +16,7 @@ jobs:
   #     - run: |
   #         npm run all
   test: # make sure the action works on a clean machine without building
-    runs-on: macOS-latest
+    runs-on: macos-latest-xlarge
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
