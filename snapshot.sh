@@ -1,5 +1,13 @@
 #! /bin/bash
 
+# use this script to test locally all the steps to run the snapshot ci
+
+# remove any previous build
+rm build-*.tar.gz || true
+# build the app
+eas build --profile screenshot --platform ios --local
+# rename the build to the correct name
+mv build-*.tar.gz AwesomeStorybook.tar.gz
 # launch the simulator
 xcrun simctl boot "iPhone 15"
 # check if the simulator is booted
