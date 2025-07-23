@@ -15,3 +15,9 @@ web-build/
 ios/
 android/
 AwesomeStorybook.app
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

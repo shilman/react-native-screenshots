@@ -12,14 +12,17 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'yarn'
       - uses: futureware-tech/simulator-action@v3
         with:
           model: 'iPhone 15'
           erase_before_boot: false
           shutdown_after_job: false
       # put these here so its doing stuff whilst the simulator is booting
-      - run: bun install
+      - run: yarn install
       - run: tar -xvzf AwesomeStorybook.tar.gz
       # check if the simulator is booted
       - run: xcrun simctl bootstatus booted
@@ -30,7 +33,7 @@ jobs:
       # install the app
       - run: xcrun simctl install booted AwesomeStorybook.app
       # Do the actual snapshotting
-      - run: bun run snapshot-storybook
+      - run: yarn snapshot-storybook
       # terminate the app after we are done
       - run: xcrun simctl terminate booted com.chromatic.awesomestorybook || true
       # uninstall the app after we are done
