@@ -4,7 +4,6 @@ import Events from 'storybook/internal/core-events';
 import { execSync } from 'child_process';
 import { buildIndex } from 'storybook/internal/core-server';
 import { WebSocketServer } from 'ws';
-import process from 'node:process';
 
 async function doEverything() {
   const secured = false;
@@ -67,42 +66,42 @@ async function doEverything() {
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
 
-  channel.once(Events.STORY_RENDERED, async () => {
-    console.log('Going through all stories');
-
-    await sleep(500);
+  async function GoThroughAllStories() {
+    // wait 500ms for storybook to start?
+    await sleep(1000);
 
     for (const entry of entries) {
       console.log('story', entry.title, entry.name);
 
       channel.emit(Events.SET_CURRENT_STORY, { storyId: entry.id });
-
-      await new Promise((resolve, reject) => {
+      await new Promise((resolve) => {
         channel.on(Events.CURRENT_STORY_WAS_SET, resolve);
-        setTimeout(() => {
-          console.log('Story not set', entry.title, entry.name);
-          reject(new Error('Story not set'));
-        }, 5000);
       });
-
       exec(
         `xcrun simctl io booted screenshot --type png screenshots/${entry.id}.png`,
       );
     }
+  }
 
-    exec(
-      'xcrun simctl terminate booted com.chromatic.awesomestorybook || true',
-    );
+  // channel.once(Events.STORY_RENDERED, () => {
+  console.log('Going through all stories');
+  GoThroughAllStories()
+    .then(() => {
+      exec(
+        'xcrun simctl terminate booted com.chromatic.awesomestorybook || true',
+      );
 
-    wss.clients.forEach((ws) => ws.close());
+      wss.clients.forEach((ws) => ws.close());
 
-    wss.close();
+      wss.close();
 
-    process.exit(0);
-  });
+      process.exit(0);
+    })
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    });
+  // });
 }
 
-doEverything().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+doEverything();
