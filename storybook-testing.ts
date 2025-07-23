@@ -25,7 +25,9 @@ async function doEverything() {
   wss.on('connection', function connection(ws) {
     console.log('websocket connection established');
 
-    ws.on('error', console.error);
+    ws.on('error', (error) => {
+      console.error('websocket error', error);
+    });
 
     ws.on('message', function message(data) {
       try {
@@ -33,6 +35,7 @@ async function doEverything() {
 
         wss.clients.forEach((wsClient) => wsClient.send(JSON.stringify(json)));
       } catch (error) {
+        console.log('error parsing message', data.toString());
         console.error(error);
       }
     });
@@ -44,7 +47,7 @@ async function doEverything() {
     transport: new WebsocketTransport({
       url,
       page: 'manager',
-      onError: console.error,
+      onError: (error) => console.error('channel error', error),
     }),
   });
 
@@ -74,8 +77,12 @@ async function doEverything() {
       console.log('story', entry.title, entry.name);
 
       channel.emit(Events.SET_CURRENT_STORY, { storyId: entry.id });
-      await new Promise((resolve) => {
+      await new Promise((resolve, reject) => {
         channel.on(Events.CURRENT_STORY_WAS_SET, resolve);
+        setTimeout(() => {
+          console.log('story not set', entry.title, entry.name);
+          reject(new Error('story not set'));
+        }, 5000);
       });
       exec(
         `xcrun simctl io booted screenshot --type png screenshots/${entry.id}.png`,

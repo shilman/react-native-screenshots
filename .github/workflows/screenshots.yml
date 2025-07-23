@@ -33,6 +33,8 @@ jobs:
       # install the app
       - run: xcrun simctl install booted AwesomeStorybook.app
       # Do the actual snapshotting
+      - run: lsof -ti :7007 | xargs kill
+      # Do the actual snapshotting
       - run: npm run snapshot-storybook
       # terminate the app after we are done
       - run: xcrun simctl terminate booted com.chromatic.awesomestorybook || true
