@@ -1,14 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-native';
 import React from 'react';
 import { View } from 'react-native';
 import { MyButton } from './Button';
+import { action } from 'storybook/actions';
 
 const meta = {
   title: 'MyButton',
   component: MyButton,
   args: {
     text: 'Hello world',
-    onPress: () => console.log('Button pressed'),
+    onPress: action('onPress'),
   },
   decorators: [
     (Story) => (
