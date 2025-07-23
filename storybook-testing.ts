@@ -68,7 +68,7 @@ async function doEverything() {
 
   async function GoThroughAllStories() {
     // wait 500ms for storybook to start?
-    await sleep(500);
+    await sleep(1000);
 
     for (const entry of entries) {
       console.log('story', entry.title, entry.name);
@@ -83,25 +83,25 @@ async function doEverything() {
     }
   }
 
-  channel.once(Events.STORY_RENDERED, () => {
-    console.log('Going through all stories');
-    GoThroughAllStories()
-      .then(() => {
-        exec(
-          'xcrun simctl terminate booted com.chromatic.awesomestorybook || true',
-        );
+  // channel.once(Events.STORY_RENDERED, () => {
+  console.log('Going through all stories');
+  GoThroughAllStories()
+    .then(() => {
+      exec(
+        'xcrun simctl terminate booted com.chromatic.awesomestorybook || true',
+      );
 
-        wss.clients.forEach((ws) => ws.close());
+      wss.clients.forEach((ws) => ws.close());
 
-        wss.close();
+      wss.close();
 
-        process.exit(0);
-      })
-      .catch((e) => {
-        console.error(e);
-        process.exit(1);
-      });
-  });
+      process.exit(0);
+    })
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    });
+  // });
 }
 
 doEverything();
