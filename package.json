@@ -14,7 +14,7 @@
     "storybook": "expo start --dev-client",
     "storybook:ios": "expo start --dev-client --ios",
     "storybook:android": "expo start --dev-client --android",
-    "snapshot-storybook": "bun storybook-testing.ts",
+    "snapshot-storybook": "tsx storybook-testing.ts",
     "build:screenshot:ios:local": "eas build --profile screenshot --platform ios --local",
     "build:screenshot:android:local": "eas build --profile screenshot --platform android --local",
     "build:ios": "bash ./build.sh",
@@ -45,17 +45,20 @@
     "@storybook/addon-ondevice-actions": "^9.0.18",
     "@storybook/addon-ondevice-backgrounds": "^9.0.18",
     "@storybook/addon-ondevice-controls": "^9.0.18",
-    "@storybook/react-native-web-vite": "^9.0.18",
-    "vite": "^7.0.5",
     "@storybook/react-native": "^9.0.18",
+    "@storybook/react-native-web-vite": "^9.0.18",
     "@types/react": "~19.0.10",
     "babel-plugin-react-docgen-typescript": "^1.5.1",
     "cross-env": "^7.0.3",
     "magicast": "^0.3.4",
+    "prettier": "^3.3.3",
     "storybook": "^9.0.18",
     "typescript": "~5.8.3",
+    "vite": "^7.0.5",
     "websocket-polyfill": "^1.0.0",
-    "prettier": "^3.3.3"
+    "@types/ws": "^8.18.1",
+    "ws": "^8.18.3",
+    "tsx": "^4.20.3"
   },
   "resolutions": {
     "react-docgen-typescript": "2.2.2"
