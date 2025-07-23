@@ -8,6 +8,7 @@ const main: StorybookConfig = {
     '@storybook/addon-ondevice-actions',
     // './preset',
   ],
+  framework: '@storybook/react-native',
 };
 
 export default main;

@@ -1,18 +1,9 @@
-// import { Channel, WebsocketTransport } from "@storybook/core/channels";
 import 'websocket-polyfill';
 import { Channel, WebsocketTransport } from 'storybook/internal/channels';
 import Events from 'storybook/internal/core-events';
-import { toId } from 'storybook/internal/csf';
 import { execSync } from 'child_process';
-import { normalizeStories, loadMainConfig } from 'storybook/internal/common';
-import { loadCsf } from 'storybook/internal/csf-tools';
-// @ts-ignore
-// import { getMain } from '@storybook/react-native/scripts/loader.js';
-import * as fs from 'fs';
-import * as glob from 'glob';
-import * as path from 'path';
+import { buildIndex } from 'storybook/internal/core-server';
 import { WebSocketServer } from 'ws';
-import { StoriesEntry } from 'storybook/internal/types';
 
 async function doEverything() {
   const secured = false;
@@ -65,46 +56,12 @@ async function doEverything() {
 
   console.log('Starting storybook testing');
 
-  const absolute = true;
-
   const configPath = './.rnstorybook';
 
-  // const mainImport = getMain({ configPath });
-  // const main = mainImport.default ?? mainImport;
-  const main = await loadMainConfig({ configDir: configPath });
-
-  const storiesSpecifiers = normalizeStories(main.stories as StoriesEntry[], {
-    configDir: configPath,
-    workingDir: process.cwd(),
-  });
-
-  function ensureRelativePathHasDot(relativePath: string) {
-    return relativePath.startsWith('.') ? relativePath : `./${relativePath}`;
-  }
-
-  const storyPaths = storiesSpecifiers.reduce((acc, specifier) => {
-    const paths = glob
-      .sync(specifier.files, {
-        cwd: path.resolve(process.cwd(), specifier.directory),
-        absolute,
-        // default to always ignore (exclude) anything in node_modules
-        ignore: ['**/node_modules'],
-      })
-      .map((storyPath) => {
-        const pathWithDirectory = path.join(specifier.directory, storyPath);
-        const requirePath = absolute
-          ? storyPath
-          : ensureRelativePathHasDot(
-              path.relative(configPath, pathWithDirectory),
-            );
-
-        const normalizePathForWindows = (str: string) =>
-          path.sep === '\\' ? str.replace(/\\/g, '/') : str;
-
-        return normalizePathForWindows(requirePath);
-      });
-    return [...acc, ...paths];
-  }, [] as string[]);
+  const index = await buildIndex({ configDir: configPath });
+  const entries = Object.values(index.entries).filter(
+    (entry) => entry.type === 'story',
+  );
 
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
@@ -113,32 +70,16 @@ async function doEverything() {
     // wait 500ms for storybook to start?
     await sleep(500);
 
-    const csfStories = storyPaths.map((storyPath) => {
-      const code = fs.readFileSync(storyPath, { encoding: 'utf-8' }).toString();
-      return loadCsf(code, {
-        fileName: storyPath,
-        makeTitle: (userTitle) => userTitle,
-      }).parse();
-    });
+    for (const entry of entries) {
+      console.log('story', entry.title, entry.name);
 
-    for (const { meta, stories } of csfStories) {
-      if (meta.title) {
-        for (const { name: storyName } of stories) {
-          console.log('story', meta.title, storyName);
-
-          const storyId = toId(meta.title, storyName);
-
-          channel.emit(Events.SET_CURRENT_STORY, { storyId });
-
-          await new Promise((resolve) => {
-            channel.on(Events.CURRENT_STORY_WAS_SET, resolve);
-          });
-
-          exec(
-            `xcrun simctl io booted screenshot --type png screenshots/${storyId}.png`,
-          );
-        }
-      }
+      channel.emit(Events.SET_CURRENT_STORY, { storyId: entry.id });
+      await new Promise((resolve) => {
+        channel.on(Events.CURRENT_STORY_WAS_SET, resolve);
+      });
+      exec(
+        `xcrun simctl io booted screenshot --type png screenshots/${entry.id}.png`,
+      );
     }
   }
 
