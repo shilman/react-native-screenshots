@@ -1,4 +1,5 @@
-export default ({ config }) => ({
+import { ExpoConfig, ConfigContext } from 'expo/config';
+export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'AwesomeStorybook',
   slug: 'awesome-storybook',
@@ -22,6 +23,12 @@ export default ({ config }) => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'com.chromatic.awesomestorybook',
+    config: {
+      usesNonExemptEncryption: false,
+    },
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+    },
   },
   android: {
     adaptiveIcon: {
