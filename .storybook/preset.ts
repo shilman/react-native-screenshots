@@ -1,6 +1,6 @@
-import type { Indexer } from '@storybook/core/types';
-import { loadCsf } from '@storybook/core/csf-tools';
-import { serverRequire } from '@storybook/core/common';
+import type { Indexer } from 'storybook/internal/types';
+import { loadCsf } from 'storybook/internal/csf-tools';
+import { serverRequire } from 'storybook/internal/common';
 import { compile } from './compile';
 import { vite, webpack, STORIES_REGEX } from './unplugin';
 

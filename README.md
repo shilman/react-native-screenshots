@@ -1,6 +1,17 @@
-![image](https://user-images.githubusercontent.com/3481514/145904252-92e3dc1e-591f-410f-88a1-b4250f4ba6f2.png)
+# React Native Screenshots
 
-## Taking image snapshots of Storybook
+This demonstrates how to screenshot React Native (RN) from a mobile simulator and test them in Chromatic.
+
+It consists of the following:
+
+1. **RN storybook**. The "main" Storybook, configured by the `.rnstorybook` config dir.
+2. **Snapshot script**. A script, `snapshot-storybook.ts`, that navigates to every story in the running RN storybook and dumps a snapshot into the `snapshots` directory.
+3. **Snapshot storybook**. A second Storybook, configured by the `.storybook` config dir, that renders images from the `screenshots` directory as stories, so that Chromatic can process them.
+4. **Github action**. A Github action workflow that runs on MacOS and executes the snapshot script to populate the `screenshots` directory.
+
+![architecture](https://github.com/user-attachments/assets/504588df-4e56-404c-b550-a76c967df079)
+
+## Running locally
 
 Screenshotting your RN app requires a few steps:
 
@@ -15,3 +26,30 @@ EXPO_PUBLIC_STORYBOOK_SNAPSHOT=true npm run storybook:ios
 ```sh
 npm run snapshot-storybook
 ```
+
+3. View the screenshot Storybook to see the results as they will be sent to Chromatic.
+
+```sh
+npm run storybook:web
+```
+
+## Running in CI
+
+Running in CI requires a built application binary:
+
+```sh
+build.sh
+```
+
+This generates the file `AwesomeStorybook.tar.gz`, which is consumed by the CI script.
+In this prototype, we are doing this by hand and checking it into Git for our own convenience
+
+We assume that real-world RN projects are already building binaries as part of their CI workflow
+and that you would update the scripts to consume those instead of the hard-coded build shown here.
+
+## Known limitations
+
+The prototype has the following known limitations, none of which are fundamental to the approach:
+
+- [ ] When running locally, writing a snapshot to the file system causes the simulator to refresh, which messes up the next snapshot in the list. This is not a problem in CI because we are running against the built application, and not in dev mode. To fix this, we need to figure out how to get RN to ignore the `screenshots` directory.
+- [ ] Lack of story-level Chromatic configuration. Chromatic can be configured in various ways, e.g. to skip stories, or even to ignore regions within a story. This prototype would need to be extended to add these features.

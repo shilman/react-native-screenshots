@@ -5,7 +5,7 @@ import { execSync } from 'child_process';
 import { buildIndex } from 'storybook/internal/core-server';
 import { WebSocketServer } from 'ws';
 
-async function doEverything() {
+async function snapshotStorybook() {
   const secured = false;
   const host = 'localhost';
   const port = 7007;
@@ -69,7 +69,7 @@ async function doEverything() {
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
 
-  async function GoThroughAllStories() {
+  async function snapshotAllStories() {
     // wait 500ms for storybook to start?
     await sleep(1000);
 
@@ -92,7 +92,7 @@ async function doEverything() {
 
   // channel.once(Events.STORY_RENDERED, () => {
   console.log('Going through all stories');
-  GoThroughAllStories()
+  snapshotAllStories()
     .then(() => {
       exec(
         'xcrun simctl terminate booted com.chromatic.awesomestorybook || true',
@@ -111,4 +111,4 @@ async function doEverything() {
   // });
 }
 
-doEverything();
+snapshotStorybook();
