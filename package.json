@@ -14,7 +14,7 @@
     "storybook": "expo start --dev-client",
     "storybook:ios": "expo start --dev-client --ios",
     "storybook:android": "expo start --dev-client --android",
-    "snapshot-storybook": "tsx storybook-testing.ts",
+    "snapshot-storybook": "tsx snapshot-storybook.ts",
     "build:screenshot:ios:local": "eas build --profile screenshot --platform ios --local",
     "build:screenshot:android:local": "eas build --profile screenshot --platform android --local",
     "build:ios": "bash ./build.sh",
