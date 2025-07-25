@@ -15,7 +15,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
       - uses: oven-sh/setup-bun@v2
       - uses: futureware-tech/simulator-action@v3
         with:
