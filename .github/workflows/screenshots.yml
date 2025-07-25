@@ -24,6 +24,7 @@ jobs:
       # put these here so its doing stuff whilst the simulator is booting
       - run: npm install --no-audit --progress=false
       - run: tar -xvzf AwesomeStorybook.tar.gz
+      - run: npm run repack:ios
       # check if the simulator is booted
       - run: xcrun simctl bootstatus booted
       # terminate the app if it is running
@@ -31,7 +32,7 @@ jobs:
       # uninstall the app if it is installed
       - run: xcrun simctl uninstall booted com.chromatic.awesomestorybook || true
       # install the app
-      - run: xcrun simctl install booted AwesomeStorybook.app
+      - run: xcrun simctl install booted AwesomeStorybook.ipa
       # Do the actual snapshotting
       - run: lsof -ti :7007 | xargs kill
       # Do the actual snapshotting

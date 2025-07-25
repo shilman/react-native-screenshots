@@ -19,7 +19,8 @@
     "build:screenshot:android:local": "eas build --profile screenshot --platform android --local",
     "build:ios": "bash ./build.sh",
     "format": "prettier --write .",
-    "prebuild": "expo prebuild --clean"
+    "prebuild": "expo prebuild --clean",
+    "repack:ios": "repack-app -p ios --source-app AwesomeStorybook.app --output AwesomeStorybook.ipa"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.1.6",
@@ -57,7 +58,8 @@
     "tsx": "^4.20.3",
     "typescript": "~5.8.3",
     "vite": "^7.0.5",
-    "websocket-polyfill": "^1.0.0"
+    "websocket-polyfill": "^1.0.0",
+    "@expo/repack-app": "latest"
   },
   "resolutions": {
     "react-docgen-typescript": "2.2.2"
