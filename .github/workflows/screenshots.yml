@@ -22,6 +22,11 @@ jobs:
           erase_before_boot: false
           shutdown_after_job: false
       # put these here so its doing stuff whilst the simulator is booting
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
       - run: bun install
       - run: tar -xvzf AwesomeStorybook.tar.gz
       - run: bun run repack:ios
