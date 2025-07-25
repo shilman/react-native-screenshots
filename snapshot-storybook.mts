@@ -2,8 +2,12 @@ import 'websocket-polyfill';
 import { Channel, WebsocketTransport } from 'storybook/internal/channels';
 import Events from 'storybook/internal/core-events';
 import { execSync } from 'child_process';
-import { buildIndex } from 'storybook/internal/core-server';
 import { WebSocketServer } from 'ws';
+import { createRequire } from 'node:module';
+import type { IndexEntry } from 'storybook/internal/types';
+
+// so that we can require the cjs code from core-server
+const require = createRequire(import.meta.url);
 
 const exec = (
   command: string,
@@ -134,10 +138,12 @@ async function snapshotStorybook() {
   console.log('Starting storybook testing');
 
   const configPath = './.rnstorybook';
+  // note that this is necessary to run directly in node instead of with tsx/other
+  const { buildIndex } = await require('storybook/internal/core-server');
 
   const index = await buildIndex({ configDir: configPath });
   const entries = Object.values(index.entries).filter(
-    (entry) => entry.type === 'story',
+    (entry: IndexEntry) => entry.type === 'story',
   );
 
   const sleep = (ms: number) =>
