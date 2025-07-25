@@ -1,25 +1,18 @@
-/** @type{import("@storybook/react-webpack5").StorybookConfig} */
-module.exports = {
+import { defineMain } from '@storybook/react-native-web-vite/node';
+
+export default defineMain({
   stories: [
     '../components/**/*.stories.@(js|jsx|ts|tsx)',
     '../components/**/*.dynamic.@(js|jsx|ts|tsx)',
   ],
-  addons: [
-    '@storybook/addon-links',
-    '@storybook/addon-essentials',
-    '@storybook/addon-react-native-web',
-    './preset',
-  ],
+  addons: ['./preset'],
   framework: {
-    name: '@storybook/react-webpack5',
+    name: '@storybook/react-native-web-vite',
     options: {},
   },
-  docs: {
-    autodocs: false,
-  },
   staticDirs: [{ from: '../screenshots', to: 'screenshots' }],
-  reactNativeServerOptions: {
-    host: 'localhost',
-    port: 7007,
-  },
-};
+  // reactNativeServerOptions: {
+  //   host: 'localhost',
+  //   port: 7007,
+  // },
+});

@@ -1,31 +1,20 @@
-const path = require('path');
+// const path = require('path');
 const { getDefaultConfig } = require('expo/metro-config');
 const withStorybook = require('@storybook/react-native/metro/withStorybook');
-
+// const exclusionList = require('metro-config/src/defaults/exclusionList');
 const defaultConfig = getDefaultConfig(__dirname);
 
-// defaultConfig.transformer.unstable_allowRequireContext = true;
-
-// defaultConfig.resolver.resolveRequest = (context, moduleName, platform) => {
-//   const defaultResolveResult = context.resolveRequest(context, moduleName, platform);
-
-//   if (
-//     process.env.STORYBOOK_ENABLED !== 'true' &&
-//     defaultResolveResult?.filePath?.includes?.('.ondevice/')
-//   ) {
-//     return {
-//       type: 'empty',
-//     };
-//   }
-
-//   return defaultResolveResult;
-// };
+// defaultConfig.resolver.blacklistRE = exclusionList([
+//   path.resolve('screenshots/.*'),
+// ]);
 
 module.exports = withStorybook(defaultConfig, {
   enabled: true,
-  configPath: path.resolve(__dirname, './.ondevice'),
-  websockets: {
-    port: 7007,
-    hostname: 'localhost',
-  },
+  // websockets:
+  //   process.env.NODE_ENV === 'development'
+  //     ? {
+  //         port: 7007,
+  //         hostname: 'localhost',
+  //       }
+  //     : undefined,
 });
