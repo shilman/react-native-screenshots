@@ -155,14 +155,14 @@ async function snapshotStorybook() {
 
       channel.emit(Events.SET_CURRENT_STORY, { storyId: entry.id });
 
-      await Promise.race([
-        new Promise((resolve) =>
-          channel.on(Events.CURRENT_STORY_WAS_SET, resolve),
-        ),
-
-        // sometimes we miss the event?
-        sleep(500),
-      ]);
+      // await Promise.race([
+      await new Promise((resolve, reject) => {
+        channel.on(Events.CURRENT_STORY_WAS_SET, resolve);
+        setTimeout(() => {
+          console.log('story not set', entry.title, entry.name);
+          reject(new Error('story not set'));
+        }, 5000);
+      });
 
       exec(
         `xcrun simctl io booted screenshot --type png screenshots/${entry.id}.png`,
