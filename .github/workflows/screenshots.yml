@@ -31,7 +31,8 @@ jobs:
       - run: xcrun simctl terminate booted com.chromatic.awesomestorybook || true
       # uninstall the app if it is installed
       - run: xcrun simctl uninstall booted com.chromatic.awesomestorybook || true
-      - run: ls -la
+      - run: unzip AwesomeStorybook.ipa
+      - run: xcrun simctl install booted Payload/AwesomeStorybook.app
       # install the app
       - run: xcrun simctl install booted AwesomeStorybook.ipa
       # Do the actual snapshotting
