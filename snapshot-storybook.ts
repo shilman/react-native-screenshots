@@ -144,9 +144,6 @@ async function snapshotStorybook() {
     new Promise((resolve) => setTimeout(resolve, ms));
 
   async function snapshotAllStories() {
-    // wait 500ms for storybook to start?
-    await sleep(1000);
-
     for (const entry of entries) {
       console.log('story', entry.title, entry.name);
 
@@ -164,25 +161,34 @@ async function snapshotStorybook() {
     }
   }
 
-  channel.once(Events.STORY_RENDERED, () => {
-    console.log('Going through all stories');
-    snapshotAllStories()
-      .then(() => {
-        exec(
-          'xcrun simctl terminate booted com.chromatic.awesomestorybook || true',
-        );
-
-        wss.clients.forEach((ws) => ws.close());
-
-        wss.close();
-
-        process.exit(0);
-      })
-      .catch((e) => {
-        console.error(e);
-        process.exit(1);
+  // wait 2000ms for storybook to start or for story to be rendered
+  await Promise.race([
+    sleep(2000),
+    new Promise((resolve) => {
+      channel.once(Events.STORY_RENDERED, () => {
+        setTimeout(() => {
+          // extra moment for the dev client nonsense to settle
+          resolve(0);
+        }, 250);
       });
+    }),
+  ]);
+
+  console.log('Going through all stories');
+  await snapshotAllStories();
+
+  exec('xcrun simctl terminate booted com.chromatic.awesomestorybook || true', {
+    exitOnError: false,
   });
+
+  wss.clients.forEach((ws) => ws.close());
+
+  wss.close();
+
+  process.exit(0);
 }
 
-snapshotStorybook();
+snapshotStorybook().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
