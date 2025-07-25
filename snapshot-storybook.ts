@@ -5,6 +5,68 @@ import { execSync } from 'child_process';
 import { buildIndex } from 'storybook/internal/core-server';
 import { WebSocketServer } from 'ws';
 
+const exec = (command: string, errorMessage?: string) => {
+  try {
+    execSync(command);
+  } catch (error) {
+    if (errorMessage) {
+      console.error(errorMessage);
+    } else {
+      console.error('Error executing command', command, error);
+    }
+
+    process.exit(1);
+  }
+};
+
+interface SimulatorDevice {
+  udid: string;
+  name: string;
+  state: 'Shutdown' | 'Booted' | 'Shutting Down' | 'Booting';
+  isAvailable: boolean;
+  deviceTypeIdentifier: string;
+}
+
+interface SimulatorData {
+  devices: Record<string, SimulatorDevice[]>;
+}
+
+const bootBestSimulator = (): string => {
+  const { devices }: SimulatorData = JSON.parse(
+    execSync('xcrun simctl list devices --json', { encoding: 'utf8' }),
+  );
+
+  const availableDevices = Object.values(devices)
+    .flat()
+    .filter((d) => d.name.includes('iPhone') && d.isAvailable)
+    .sort((a, b) => {
+      // Prefer booted devices
+      const bootedDiff =
+        (b.state === 'Booted' ? 1 : 0) - (a.state === 'Booted' ? 1 : 0);
+      if (bootedDiff !== 0) return bootedDiff;
+
+      // Prefer devices that match "iPhone [number]" pattern
+      const aIsStandard = /^iPhone \d+$/.test(a.name);
+      const bIsStandard = /^iPhone \d+$/.test(b.name);
+
+      if (!aIsStandard && bIsStandard) return 1;
+      if (aIsStandard && !bIsStandard) return -1;
+
+      // Fall back to name comparison
+      return b.name.localeCompare(a.name);
+    });
+
+  const device = availableDevices[0];
+  if (!device) throw new Error('No iPhone simulator found');
+
+  if (device.state === 'Booted') {
+    return device.udid;
+  }
+
+  execSync(`xcrun simctl boot ${device.udid}`, { stdio: 'inherit' });
+  return device.udid;
+};
+
 async function snapshotStorybook() {
   const secured = false;
   const host = 'localhost';
@@ -12,15 +74,6 @@ async function snapshotStorybook() {
   const domain = `${host}:${port}`;
 
   const wss = new WebSocketServer({ port, host });
-
-  const exec = (command: string) => {
-    try {
-      execSync(command);
-    } catch (error) {
-      console.error('Error executing command', command, error);
-      process.exit(1);
-    }
-  };
 
   wss.on('connection', function connection(ws) {
     console.log('websocket connection established');
@@ -50,6 +103,17 @@ async function snapshotStorybook() {
       onError: (error) => console.error('channel error', error),
     }),
   });
+
+  // make sure simulator is booted
+  bootBestSimulator();
+
+  exec('xcrun simctl bootstatus booted');
+
+  // will throw if app is not installed
+  exec(
+    'xcrun simctl get_app_container booted com.chromatic.awesomestorybook',
+    'App com.chromatic.awesomestorybook is not installed on device.',
+  );
 
   // kill the app if it's running
   exec('xcrun simctl terminate booted com.chromatic.awesomestorybook || true');
@@ -90,25 +154,25 @@ async function snapshotStorybook() {
     }
   }
 
-  // channel.once(Events.STORY_RENDERED, () => {
-  console.log('Going through all stories');
-  snapshotAllStories()
-    .then(() => {
-      exec(
-        'xcrun simctl terminate booted com.chromatic.awesomestorybook || true',
-      );
+  channel.once(Events.STORY_RENDERED, () => {
+    console.log('Going through all stories');
+    snapshotAllStories()
+      .then(() => {
+        exec(
+          'xcrun simctl terminate booted com.chromatic.awesomestorybook || true',
+        );
 
-      wss.clients.forEach((ws) => ws.close());
+        wss.clients.forEach((ws) => ws.close());
 
-      wss.close();
+        wss.close();
 
-      process.exit(0);
-    })
-    .catch((e) => {
-      console.error(e);
-      process.exit(1);
-    });
-  // });
+        process.exit(0);
+      })
+      .catch((e) => {
+        console.error(e);
+        process.exit(1);
+      });
+  });
 }
 
 snapshotStorybook();
