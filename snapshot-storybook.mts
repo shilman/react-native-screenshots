@@ -193,12 +193,12 @@ async function snapshotStorybook() {
           channel.emit(Events.SET_CURRENT_STORY, { storyId: entry.id });
         }, 1000);
 
-        channel.on(Events.STORY_RENDERED, (storyId) => {
+        channel.on(Events.CURRENT_STORY_WAS_SET, ({ storyId }) => {
           if (entry.id === storyId) {
+            console.log('story was set', storyId);
             clearInterval(interval);
             resolve(0);
           }
-          console.log('story rendered', storyId);
         });
 
         setTimeout(() => {
