@@ -79,14 +79,14 @@ const bootBestSimulator = (): string => {
   return device.udid;
 };
 
+const secured = false;
+const host = 'localhost';
+const port = 7007;
+const domain = `${host}:${port}`;
+
+const wss = new WebSocketServer({ port, host, autoPong: true });
+
 async function snapshotStorybook() {
-  const secured = false;
-  const host = 'localhost';
-  const port = 7007;
-  const domain = `${host}:${port}`;
-
-  const wss = new WebSocketServer({ port, host });
-
   wss.on('connection', function connection(ws) {
     console.log('websocket connection established');
 
@@ -194,7 +194,12 @@ async function snapshotStorybook() {
   process.exit(0);
 }
 
-snapshotStorybook().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+snapshotStorybook()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(() => {
+    wss.close();
+    wss.clients.forEach((ws) => ws.close());
+  });
