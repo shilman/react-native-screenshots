@@ -182,27 +182,22 @@ async function snapshotStorybook() {
 
   async function snapshotAllStories() {
     channel.removeAllListeners();
+
     for (const entry of entries) {
       console.log('story', entry.title, entry.name);
 
       channel.emit(Events.SET_CURRENT_STORY, { storyId: entry.id });
 
       await new Promise((resolve, reject) => {
-        const interval = setInterval(() => {
-          console.log('try setting story again', entry.title, entry.name);
-          channel.emit(Events.SET_CURRENT_STORY, { storyId: entry.id });
-        }, 1000);
-
         channel.on(Events.CURRENT_STORY_WAS_SET, ({ storyId }) => {
           if (entry.id === storyId) {
             console.log('story was set', storyId);
-            clearInterval(interval);
+
             resolve(0);
           }
         });
 
         setTimeout(() => {
-          clearInterval(interval);
           console.log('story not set', entry.title, entry.name);
           reject(new Error('story not set'));
         }, 5000);
