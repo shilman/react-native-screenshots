@@ -5,7 +5,13 @@ import { execSync } from 'child_process';
 import { buildIndex } from 'storybook/internal/core-server';
 import { WebSocketServer } from 'ws';
 
-const exec = (command: string, errorMessage?: string) => {
+const exec = (
+  command: string,
+  {
+    errorMessage,
+    exitOnError = true,
+  }: { errorMessage?: string; exitOnError?: boolean } = { exitOnError: true },
+) => {
   try {
     execSync(command);
   } catch (error) {
@@ -15,7 +21,9 @@ const exec = (command: string, errorMessage?: string) => {
       console.error('Error executing command', command, error);
     }
 
-    process.exit(1);
+    if (exitOnError) {
+      process.exit(1);
+    }
   }
 };
 
@@ -110,13 +118,15 @@ async function snapshotStorybook() {
   exec('xcrun simctl bootstatus booted');
 
   // will throw if app is not installed
-  exec(
-    'xcrun simctl get_app_container booted com.chromatic.awesomestorybook',
-    'App com.chromatic.awesomestorybook is not installed on device.',
-  );
+  exec('xcrun simctl get_app_container booted com.chromatic.awesomestorybook', {
+    errorMessage:
+      'App com.chromatic.awesomestorybook is not installed on device.',
+  });
 
   // kill the app if it's running
-  exec('xcrun simctl terminate booted com.chromatic.awesomestorybook || true');
+  exec('xcrun simctl terminate booted com.chromatic.awesomestorybook || true', {
+    exitOnError: false,
+  });
 
   // launch the app
   exec('xcrun simctl launch booted com.chromatic.awesomestorybook');
