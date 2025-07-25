@@ -1,7 +1,7 @@
 xcrun simctl boot "iPhone 15"
 rm -rf AwesomeStorybook.app Payload AwesomeStorybook.ipa
 tar -xvzf AwesomeStorybook.tar.gz
-npm run repack:ios
+bun run repack:ios
 xcrun simctl bootstatus booted
 xcrun simctl terminate booted com.chromatic.awesomestorybook || true
 xcrun simctl uninstall booted com.chromatic.awesomestorybook || true
@@ -11,6 +11,6 @@ unzip AwesomeStorybook.ipa
 xcrun simctl install booted Payload/AwesomeStorybook.app
 lsof -ti :7007 | xargs kill
 
-npm run snapshot-storybook
+bun run snapshot-storybook
 xcrun simctl terminate booted com.chromatic.awesomestorybook || true
 xcrun simctl uninstall booted com.chromatic.awesomestorybook || true
