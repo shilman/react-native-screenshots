@@ -27,6 +27,6 @@ type Story = StoryObj<typeof meta>;
 export const Basic: Story = {};
 export const Complex: Story = {
   args: {
-    text: 'Complex!',
+    text: 'Another button',
   },
 };
