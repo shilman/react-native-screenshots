@@ -26,6 +26,8 @@ jobs:
       - run: npm run repack:ios
       # check if the simulator is booted
       - run: xcrun simctl bootstatus booted
+      # set a fixed status bar time
+      - run: xcrun simctl status_bar booted override --time "06:00" --operatorName "" --wifiBars 3 --cellularBars 4 --batteryLevel 100
       # terminate the app if it is running
       - run: xcrun simctl terminate booted com.chromatic.awesomestorybook || true
       # uninstall the app if it is installed
