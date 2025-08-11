@@ -13,7 +13,13 @@ It consists of the following:
 
 ## Running locally
 
-Screenshotting your RN app requires a few steps:
+0. You need to run the app once to get it installed on your simulator. This is slow, but you only need to do it once.
+
+```
+npm run ios
+```
+
+After your app is bootstrapped, screenshotting your RN app requires a few steps:
 
 1. Start the RN version with `EXPO_PUBLIC_STORYBOOK_SNAPSHOT=true`. `EXPO_PUBLIC_STORYBOOK_SNAPSHOT` removes Storybook's UI for cleaner screenshots.
 
@@ -51,5 +57,4 @@ and that you would update the scripts to consume those instead of the hard-coded
 
 The prototype has the following known limitations, none of which are fundamental to the approach:
 
-- [ ] When running locally, writing a snapshot to the file system causes the simulator to refresh, which messes up the next snapshot in the list. This is not a problem in CI because we are running against the built application, and not in dev mode. To fix this, we need to figure out how to get RN to ignore the `screenshots` directory.
 - [ ] Lack of story-level Chromatic configuration. Chromatic can be configured in various ways, e.g. to skip stories, or even to ignore regions within a story. This prototype would need to be extended to add these features.
