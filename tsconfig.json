@@ -2,7 +2,9 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     // "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "exclude": ["node_modules"]
 }

@@ -1,4 +1,4 @@
-import type { ArgTypes, Tag } from '@storybook/csf';
+import type { ArgTypes, Tag } from 'storybook/internal/csf';
 
 type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
 interface JsonMap {

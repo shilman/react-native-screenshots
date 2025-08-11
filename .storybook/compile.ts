@@ -16,7 +16,7 @@ export interface CompileOptions {}
 
 export const compile = async (
   config: DynamicConfig,
-  options?: CompileOptions
+  options?: CompileOptions,
 ) => {
   const { baseCsf } = config;
   const stories = await config.stories();

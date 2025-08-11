@@ -1,7 +1,7 @@
-import type { Indexer } from '@storybook/types';
-import { loadCsf } from '@storybook/csf-tools';
-import { serverRequire } from '@storybook/core-common';
-import { compile } from './compile.ts';
+import type { Indexer } from 'storybook/internal/types';
+import { loadCsf } from 'storybook/internal/csf-tools';
+import { serverRequire } from 'storybook/internal/common';
+import { compile } from './compile';
 import { vite, webpack, STORIES_REGEX } from './unplugin';
 
 const logger = console;

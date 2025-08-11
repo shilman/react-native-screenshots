@@ -22,7 +22,7 @@ export default defineStories({
       .filter((f) => extname(f) === '.png')
       .forEach((file) => {
         const name = file.replace('.png', '');
-        const exportKey = name.replace('-', ''); // FIXME not robust
+        const exportKey = name.replaceAll('-', ''); // FIXME not robust
         result[exportKey] = { name, args: { src: `/screenshots/${file}` } };
       });
     return result;
